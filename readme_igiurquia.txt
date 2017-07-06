@@ -1,1 +1,0 @@
-Luigi Anthony Urquia
