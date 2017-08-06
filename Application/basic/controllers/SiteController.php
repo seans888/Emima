@@ -5,7 +5,6 @@ namespace app\controllers;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
@@ -37,12 +36,10 @@ class SiteController extends Controller
             ],
         ];
     }
-	
-	public function actionSay($message = 'Hello world')
-	{
-		return $this->render('say', ['message' => $message]);
-	}
-
+	public function actionSay($message = 'Hello, user. Welcome!')
+	 {
+		return $this->render ('say', ['message' => $message]); 
+	 }
     /**
      * @inheritdoc
      */
@@ -72,7 +69,7 @@ class SiteController extends Controller
     /**
      * Login action.
      *
-     * @return Response|string
+     * @return string
      */
     public function actionLogin()
     {
@@ -92,7 +89,7 @@ class SiteController extends Controller
     /**
      * Logout action.
      *
-     * @return Response
+     * @return string
      */
     public function actionLogout()
     {
@@ -104,7 +101,7 @@ class SiteController extends Controller
     /**
      * Displays contact page.
      *
-     * @return Response|string
+     * @return string
      */
     public function actionContact()
     {
@@ -128,4 +125,7 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+	
+	
+	
 }
