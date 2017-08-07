@@ -2,103 +2,117 @@
 
 namespace app\models;
 
-class User extends \yii\base\Object implements \yii\web\IdentityInterface
+use Yii;
+
+/**
+ * This is the model class for table "user".
+ *
+ * @property integer $id
+ * @property string $user_name
+ * @property string $user_surname
+ * @property string $user_email
+ * @property integer $user_phone
+ * @property integer $landmark_id
+ *
+ * @property Account[] $accounts
+ * @property Chat[] $chats
+ * @property Feedback[] $feedbacks
+ * @property Reply[] $replies
+ * @property Landmark $landmark
+ * @property UserHasSchedule[] $userHasSchedules
+ * @property Schedule[] $schedules
+ */
+class User extends \yii\db\ActiveRecord
 {
-    public $id;
-    public $username;
-    public $password;
-    public $authKey;
-    public $accessToken;
-
-    private static $users = [
-        '100' => [
-            'id' => '100',
-            'username' => 'admin',
-            'password' => 'admin',
-            'authKey' => 'test100key',
-            'accessToken' => '100-token',
-        ],
-        '101' => [
-            'id' => '101',
-            'username' => 'demo',
-            'password' => 'demo',
-            'authKey' => 'test101key',
-            'accessToken' => '101-token',
-        ],
-    ];
-
-
     /**
      * @inheritdoc
      */
-    public static function findIdentity($id)
+    public static function tableName()
     {
-        return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
+        return 'user';
     }
 
     /**
      * @inheritdoc
      */
-    public static function findIdentityByAccessToken($token, $type = null)
+    public function rules()
     {
-        foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Finds user by username
-     *
-     * @param string $username
-     * @return static|null
-     */
-    public static function findByUsername($username)
-    {
-        foreach (self::$users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        return [
+            [['user_name', 'user_surname'], 'required'],
+            [['user_phone', 'landmark_id'], 'integer'],
+            [['user_name', 'user_surname', 'user_email'], 'string', 'max' => 45],
+            [['landmark_id'], 'exist', 'skipOnError' => true, 'targetClass' => Landmark::className(), 'targetAttribute' => ['landmark_id' => 'id']],
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public function getId()
+    public function attributeLabels()
     {
-        return $this->id;
+        return [
+            'id' => 'ID',
+            'user_name' => 'User Name',
+            'user_surname' => 'User Surname',
+            'user_email' => 'User Email',
+            'user_phone' => 'User Phone',
+            'landmark_id' => 'Landmark ID',
+        ];
     }
 
     /**
-     * @inheritdoc
+     * @return \yii\db\ActiveQuery
      */
-    public function getAuthKey()
+    public function getAccounts()
     {
-        return $this->authKey;
+        return $this->hasMany(Account::className(), ['user_id' => 'id']);
     }
 
     /**
-     * @inheritdoc
+     * @return \yii\db\ActiveQuery
      */
-    public function validateAuthKey($authKey)
+    public function getChats()
     {
-        return $this->authKey === $authKey;
+        return $this->hasMany(Chat::className(), ['user_id' => 'id']);
     }
 
     /**
-     * Validates password
-     *
-     * @param string $password password to validate
-     * @return bool if password provided is valid for current user
+     * @return \yii\db\ActiveQuery
      */
-    public function validatePassword($password)
+    public function getFeedbacks()
     {
-        return $this->password === $password;
+        return $this->hasMany(Feedback::className(), ['user_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getReplies()
+    {
+        return $this->hasMany(Reply::className(), ['user_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLandmark()
+    {
+        return $this->hasOne(Landmark::className(), ['id' => 'landmark_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserHasSchedules()
+    {
+        return $this->hasMany(UserHasSchedule::className(), ['user_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSchedules()
+    {
+        return $this->hasMany(Schedule::className(), ['id' => 'schedule_id'])->viaTable('user_has_schedule', ['user_id' => 'id']);
     }
 }
