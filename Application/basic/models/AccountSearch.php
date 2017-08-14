@@ -18,8 +18,8 @@ class AccountSearch extends Account
     public function rules()
     {
         return [
-            [['id', 'user_id', 'admin_id'], 'integer'],
-            [['account_name', 'date_created'], 'safe'],
+            [['id'], 'integer'],
+            [['account_name', 'user_id', 'admin_id', 'date_created'], 'safe'],
         ];
     }
 
@@ -55,17 +55,22 @@ class AccountSearch extends Account
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
+
+            $query->joinWith('admin')
+                ->joinWith('user');
         }
 
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
             'date_created' => $this->date_created,
-            'user_id' => $this->user_id,
-            'admin_id' => $this->admin_id,
+            //'user_id' => $this->user_id,
+            //'admin_id' => $this->admin_id,
         ]);
 
-        $query->andFilterWhere(['like', 'account_name', $this->account_name]);
+        $query->andFilterWhere(['like', 'account_name', $this->account_name])
+            ->andFilterWhere(['like', 'user_name', $this->user_id])
+            ->andFilterWhere(['like', 'admin_name', $this->admin_id]);
 
         return $dataProvider;
     }

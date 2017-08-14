@@ -29,6 +29,10 @@ class Admin extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+	 public function getName()
+	 {
+		 return $this->admin_name.' '.$this->admin_surname;
+	 }
     public function rules()
     {
         return [
