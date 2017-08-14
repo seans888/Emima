@@ -44,7 +44,10 @@ class User extends \yii\db\ActiveRecord
             [['landmark_id'], 'exist', 'skipOnError' => true, 'targetClass' => Landmark::className(), 'targetAttribute' => ['landmark_id' => 'id']],
         ];
     }
-
+	 public function getName()
+	 {
+		 return $this->user_name.' '.$this->user_surname;
+	 }
     /**
      * @inheritdoc
      */
