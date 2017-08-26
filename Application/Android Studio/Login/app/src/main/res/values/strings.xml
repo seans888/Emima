@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Login</string>
+
+    <string-array name="location">
+        <item>Luzon</item>
+        <item>Visayas</item>
+        <item>Mindanao</item>
+    </string-array>
+</resources>
